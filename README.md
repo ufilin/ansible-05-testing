@@ -17,6 +17,19 @@
 | `vector_config_dir` | Директория конфигурации | `/etc/vector` |
 | `vector_data_dir` | Директория данных | `/var/lib/vector` |
 
+## Тестирование
+### Molecule
+Роль протестирована с использованием Molecule:
+
+molecule test
+
+molecule test -s podman
+
+### Tox
+Для запуска тестов через Tox:
+
+tox
+
 ## Проверки (Verify)
 
 После применения роли выполняются следующие проверки:
