@@ -1,29 +1,31 @@
-# ansible-03-yandex
-# Ansible Playbook для установки ClickHouse, Vector и Lighthouse
+# Ansible-05-testing: Role Vector
 
-## Описание
 
-Данный playbook автоматизирует установку и настройку трех сервисов на виртуальных машинах в Yandex Cloud:
+## Требования
 
-- **ClickHouse**
-- **Vector**
-- **Lighthouse**
+- Ansible 2.9 или выше
+- Поддерживаемые ОС:
+  - Ubuntu 22.04 (и выше)
+  - CentOS Stream 8
+- Python 3.6+ на целевых хостах
 
-Playbook написан с учетом требований идемпотентности и прошел проверку `ansible-lint`.
+## Переменные
 
-### Целевые хосты
-- **Операционная система**: Ubuntu
+| Переменная | Описание | Значение по умолчанию |
+|------------|----------|----------------------|
+| `vector_version` | Версия Vector | `0.21.1` |
+| `vector_config_dir` | Директория конфигурации | `/etc/vector` |
+| `vector_data_dir` | Директория данных | `/var/lib/vector` |
 
-### Три хоста в Yandex Cloud
-| Хост | Назначение | Порт |
-|------|------------|------|
-| clickhouse-01 | ClickHouse сервер | 8123 (HTTP), 9000 (Native) |
-| vector-01 | Vector для сбора логов | - |
-| lighthouse-01 | Lighthouse веб-интерфейс | 80 |
+## Проверки (Verify)
 
-### Группа безопасности
-Добавлены порты:
-- `22` - SSH
-- `80` - Lighthouse
-- `8123` - ClickHouse HTTP интерфейс
-- `9000` - ClickHouse Native протокол
+После применения роли выполняются следующие проверки:
+
+ - Существование бинарного файла /usr/bin/vector
+
+ - Существование конфигурационного файла /etc/vector/vector.yaml
+
+ - Запущен ли процесс Vector
+
+## Лицензия
+MIT
