@@ -1,0 +1,21 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check vector binary exists
+      ansible.builtin.stat:
+        path: /usr/bin/vector
+      register: binary_stat
+      failed_when: not binary_stat.stat.exists
+
+    - name: Check vector config exists
+      ansible.builtin.stat:
+        path: /etc/vector/vector.yaml
+      register: config_stat
+      failed_when: not config_stat.stat.exists
+
+    - name: Check vector is running
+      ansible.builtin.shell: pgrep -f vector
+      register: process_check
+      failed_when: process_check.rc != 0
+      changed_when: false

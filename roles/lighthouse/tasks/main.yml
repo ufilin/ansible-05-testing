@@ -1,0 +1,79 @@
+---
+# tasks file for lighthouse-role
+    - name: Ensure DNS is configured
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 8.8.8.8"
+        insertbefore: BOF
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install nginx and git
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - git
+        state: present
+
+    - name: Remove existing lighthouse directory if exists
+      ansible.builtin.file:
+        path: "{{ lighthouse_dir }}"
+        state: absent
+
+    - name: Create lighthouse directory
+      ansible.builtin.file:
+        path: "{{ lighthouse_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Clone Lighthouse repository
+      ansible.builtin.git:
+        repo: "https://github.com/VKCOM/lighthouse.git"
+        dest: "{{ lighthouse_dir }}"
+        version: master
+        force: true
+
+    - name: Set correct permissions for lighthouse
+      ansible.builtin.file:
+        path: "{{ lighthouse_dir }}"
+        owner: www-data
+        group: www-data
+        recurse: true
+        state: directory
+
+    - name: Remove default nginx sites
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/nginx/sites-enabled/default
+        - /etc/nginx/sites-available/default
+
+    - name: Configure nginx for Lighthouse
+      ansible.builtin.template:
+        src: lighthouse.conf.j2
+        dest: /etc/nginx/sites-available/lighthouse
+        mode: '0644'
+
+    - name: Enable lighthouse site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/lighthouse
+        dest: /etc/nginx/sites-enabled/lighthouse
+        state: link
+
+    - name: Test nginx configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_test
+      changed_when: false
+      failed_when: nginx_test.rc != 0
+
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
+        enabled: true

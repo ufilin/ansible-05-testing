@@ -1,0 +1,16 @@
+sources:
+  demo_logs:
+    type: demo_logs
+    format: json
+    interval: 1.0
+
+sinks:
+  clickhouse:
+    type: clickhouse
+    inputs:
+      - demo_logs
+    database: logs
+    table: vector_logs
+    endpoint: "http://{{ hostvars['clickhouse-01']['ansible_host'] }}:8123"
+    compression: gzip
+    healthcheck: true

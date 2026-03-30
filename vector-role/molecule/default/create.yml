@@ -1,0 +1,21 @@
+---
+- name: Create containers
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create Ubuntu container
+      community.docker.docker_container:
+        name: ubuntu-2204
+        image: ubuntu:22.04
+        command: sleep infinity
+        privileged: true
+        user: root
+
+    - name: Create CentOS container
+      community.docker.docker_container:
+        name: centos-stream-8
+        image: quay.io/centos/centos:stream8
+        command: sleep infinity
+        privileged: true
+        user: root
+

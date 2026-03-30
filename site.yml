@@ -1,0 +1,76 @@
+---
+- name: Установка Vector
+  hosts: vector-01
+  become: true
+  roles:
+    - role: vector-role
+      vars:
+        vector_version: "0.21.1"
+
+- name: Установка Lighthouse
+  hosts: lighthouse-01
+  become: true
+  pre_tasks:
+    - name: Ensure DNS is configured
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 8.8.8.8"
+        insertbefore: BOF
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install nginx and git
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - git
+        state: present
+
+  roles:
+    - role: lighthouse-role
+      vars:
+        lighthouse_dir: "/var/www/lighthouse"
+
+  post_tasks:
+    - name: Remove default nginx sites
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/nginx/sites-enabled/default
+        - /etc/nginx/sites-available/default
+
+    - name: Configure nginx for Lighthouse
+      ansible.builtin.template:
+        src: lighthouse.conf.j2
+        dest: /etc/nginx/sites-available/lighthouse
+        mode: '0644'
+
+    - name: Enable lighthouse site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/lighthouse
+        dest: /etc/nginx/sites-enabled/lighthouse
+        state: link
+
+    - name: Test nginx configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_test
+      changed_when: false
+      failed_when: nginx_test.rc != 0
+
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
+        enabled: true
+
+- name: Установка ClickHouse
+  hosts: clickhouse-01
+  become: true
+  roles:
+    - role: clickhouse
+      vars:
+        clickhouse_version: "22.8"

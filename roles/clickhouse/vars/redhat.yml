@@ -1,0 +1,3 @@
+---
+clickhouse_supported: true
+clickhouse_repo: "https://packages.clickhouse.com/rpm/stable/"

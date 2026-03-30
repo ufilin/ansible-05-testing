@@ -1,0 +1,15 @@
+---
+- name: Destroy containers
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Remove Ubuntu container
+      community.docker.docker_container:
+        name: ubuntu-2204
+        state: absent
+
+    - name: Remove CentOS container
+      community.docker.docker_container:
+        name: centos-stream-8
+        state: absent
+

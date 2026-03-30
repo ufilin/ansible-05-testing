@@ -1,0 +1,32 @@
+[Unit]
+Description=Vector Log Aggregator
+Documentation=https://vector.dev
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=vector
+Group=vector
+Type=simple
+ExecStartPre=/usr/bin/vector validate --config-dir {{ vector_config_dir | default('/etc/vector') }}
+ExecStart=/usr/bin/vector --config-dir {{ vector_config_dir | default('/etc/vector') }}
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+LimitNOFILE=65536
+MemoryLimit={{ vector_memory_limit | default('512M') }}
+CPUQuota={{ vector_cpu_quota | default('200%') }}
+
+# Защита
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vector
+
+[Install]
+WantedBy=multi-user.target

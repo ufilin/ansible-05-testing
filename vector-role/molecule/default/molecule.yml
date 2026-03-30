@@ -1,0 +1,41 @@
+dependency:
+  name: galaxy
+
+driver:
+  name: delegated
+
+platforms:
+  - name: ubuntu-2204
+    image: ubuntu:22.04
+    command: sleep infinity
+    privileged: true
+    user: root
+
+  - name: centos-stream-8
+    image: quay.io/centos/centos:stream8
+    command: sleep infinity
+    privileged: true
+    user: root
+
+provisioner:
+  name: ansible
+  connection_options:
+    ansible_connection: local
+  inventory:
+    hosts:
+      all:
+        hosts:
+          ubuntu-2204:
+            ansible_user: root
+            ansible_python_interpreter: /usr/bin/python3
+          centos-stream-8:
+            ansible_user: root
+            ansible_python_interpreter: /usr/bin/python3
+      local:
+        hosts:
+          localhost:
+            ansible_connection: local
+
+verifier:
+  name: ansible
+

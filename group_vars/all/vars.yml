@@ -1,0 +1,20 @@
+---
+# ClickHouse
+clickhouse_version: "24.3.4.147"
+clickhouse_packages:
+  - clickhouse-common-static
+  - clickhouse-client
+  - clickhouse-server
+clickhouse_host: "localhost"
+clickhouse_port: 8123
+
+# Vector
+vector_version: "0.21.1"
+vector_config_dir: "/etc/vector"
+
+# Lighthouse
+lighthouse_version: "master"
+lighthouse_repo: "https://github.com/VKCOM/lighthouse.git"
+lighthouse_dir: "/var/www/lighthouse"
+nginx_user: "www-data"
+nginx_group: "www-data"
