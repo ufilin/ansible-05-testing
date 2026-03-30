@@ -3,11 +3,7 @@ driver:
   name: podman
 platforms:
   - name: ubuntu-2204
-    image: ubuntu:22.04
-    command: sleep infinity
-    privileged: true
-  - name: centos-stream-8
-    image: centos:stream8
+    image: docker.io/ubuntu:22.04
     command: sleep infinity
     privileged: true
 provisioner:
@@ -15,9 +11,6 @@ provisioner:
   inventory:
     host_vars:
       ubuntu-2204:
-        ansible_user: root
-        ansible_python_interpreter: /usr/bin/python3
-      centos-stream-8:
         ansible_user: root
         ansible_python_interpreter: /usr/bin/python3
 verifier:
