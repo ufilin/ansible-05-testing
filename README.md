@@ -42,3 +42,19 @@ tox
 
 ## Лицензия
 MIT
+
+## Результат выполнения в скриншотах
+
+>> Molecule(docker)
+<p align="center">
+  <img src="ansible-05-testing_1.0.PNG" width="800">
+</p>
+>> Molecule(podman)
+<p align="center">
+  <img src="ansible-05-testing_1.1.PNG" width="800">
+</p>
+>> Tox
+<p align="center">
+  <img src="ansible-05-testing_1.2.PNG" width="800">
+</p>
+
